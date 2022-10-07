@@ -20,15 +20,5 @@
 			"Type": "Runtime",
 			"LoadingPhase": "Default"
 		}
-	],
-	"Plugins": [
-		{
-			"Name": "HTTP",
-			"Enabled": true
-		},
-		{
-			"Name": "Json",
-			"Enabled": true
-		}
 	]
 }

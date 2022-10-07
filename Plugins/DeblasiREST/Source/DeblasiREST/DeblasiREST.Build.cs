@@ -40,6 +40,8 @@ public class DeblasiREST : ModuleRules
 				"Engine",
 				"Slate",
 				"SlateCore",
+				"HTTP",
+				"Json",
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);
