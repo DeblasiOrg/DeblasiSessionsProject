@@ -31,6 +31,8 @@ public class DeblasiSessions : ModuleRules
 				"UMG",
 				"Slate",
 				"SlateCore",
+				"DeblasiREST",
+				"Json",
 				// ... add other public dependencies that you statically link with here ...
 			}
 			);

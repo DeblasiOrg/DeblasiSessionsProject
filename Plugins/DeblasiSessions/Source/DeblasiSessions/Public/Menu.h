@@ -6,6 +6,7 @@
 #include "DeblasiSessionsSubsystem.h"
 #include "Blueprint/UserWidget.h"
 #include "Components/Button.h"
+#include "Components/TextBlock.h"
 #include "Menu.generated.h"
 
 /**
@@ -58,4 +59,14 @@ private:
 	int32 NumPublicConnections{4};
 
 	FString MatchType{TEXT("FreeForAll")};
+
+	UFUNCTION()
+	void SendVersionCheckRequest();
+	void OnVersionCheckResponse(TSharedPtr<FJsonObject> Content, bool bSuccess);
+
+	UPROPERTY(meta=(BindWidget))
+	UTextBlock* VersionText;
+	
+	FString VersionCheckURL = "localhost:3000/version";
+	
 };

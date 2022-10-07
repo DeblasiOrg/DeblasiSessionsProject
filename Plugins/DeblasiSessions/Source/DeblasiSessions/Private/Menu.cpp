@@ -3,6 +3,7 @@
 
 #include "Menu.h"
 
+#include "DeblasiRESTSubsystem.h"
 #include "OnlineSubsystem.h"
 #include "Components/Button.h"
 
@@ -63,6 +64,10 @@ bool UMenu::Initialize()
 	if (JoinButton)
 	{
 		JoinButton->OnClicked.AddDynamic(this, &UMenu::JoinButtonClicked);
+	}
+	if (VersionText)
+	{
+		SendVersionCheckRequest();
 	}
 	
 	return true;
@@ -203,5 +208,46 @@ void UMenu::MenuTeardown()
 			PC->SetInputMode(GameOnly);
 			PC->SetShowMouseCursor(false);
 		}
+	}
+}
+
+void UMenu::SendVersionCheckRequest()
+{
+	if (!GetGameInstance()->IsValidLowLevel())
+		return;
+	UDeblasiRESTSubsystem* RestSubsystem = GetGameInstance()->GetSubsystem<UDeblasiRESTSubsystem>();
+	if (!RestSubsystem)
+		return;
+	RestSubsystem->SendGetRequest(VersionCheckURL);
+	RestSubsystem->GetRequestResponseDelegate.AddUObject(this, &UMenu::OnVersionCheckResponse);
+
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(
+			-1,
+			15.0f,
+			FColor::Yellow,
+			FString::Printf(TEXT("Sending request...")));
+	}
+}
+
+void UMenu::OnVersionCheckResponse(TSharedPtr<FJsonObject> Content, bool bSuccess)
+{
+	UDeblasiRESTSubsystem* RestSubsystem = GetGameInstance()->GetSubsystem<UDeblasiRESTSubsystem>();
+	RestSubsystem->GetRequestResponseDelegate.RemoveAll(this);
+
+	if (!bSuccess)
+	{
+		VersionText->SetText(FText::FromString("Connection Error"));
+	}
+	
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(
+			-1,
+			15.0f,
+			FColor::Yellow,
+			FString::Printf(TEXT("Server: Minimum Version: %s"), *Content->GetStringField("version")));
+		VersionText->SetText(FText::FromString(Content->GetStringField("version")));
 	}
 }
